@@ -1,1 +1,854 @@
-# dr-hudhaifa-
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>عيادة المصارف - الدكتور حذيفة الحمداني</title>
+
+<style>
+:root {
+--bg-radial: radial-gradient(circle at 50% 20%, #0d2838 0%, #071624 55%, #030811 100%);
+--sidebar-bg: #08121d;
+--sidebar-hover: #122336;
+--primary: #00b48a;
+--primary-glow: rgba(0, 180, 138, 0.45);
+--accent-blue: #38bdf8;
+--accent-gold: #f59e0b;
+--accent-red: #ef4444;
+--accent-purple: #a855f7;
+--panel-bg: rgba(14, 27, 43, 0.9);
+--card-bg: rgba(19, 35, 56, 0.75);
+--card-border: #1e3a5a;
+--text-main: #f8fafc;
+--text-dim: #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg-radial); background-attachment: fixed; color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
+
+/* ================= 1. واجهة الدخول والقفل ================= */
+#loginGateOverlay {
+position: fixed;
+inset: 0;
+background: radial-gradient(circle at center, #0f2d42 0%, #06111e 70%, #02060c 100%);
+z-index: 10000;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 16px;
+transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.login-card {
+background: rgba(15, 29, 46, 0.95);
+border: 1px solid var(--card-border);
+backdrop-filter: blur(16px);
+border-radius: 24px;
+padding: 32px 24px;
+width: 100%;
+max-width: 430px;
+text-align: center;
+box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 180, 138, 0.2);
+}
+.login-avatar-frame {
+width: 90px;
+height: 90px;
+border-radius: 50%;
+margin: 0 auto 12px;
+border: 3px solid var(--accent-blue);
+box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+overflow: hidden;
+background: #0d2838;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.login-avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+/* الشريط الجانبي */
+aside {
+width: 80px;
+background: var(--sidebar-bg);
+border-left: 1px solid var(--card-border);
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 14px 0;
+gap: 10px;
+flex-shrink: 0;
+z-index: 40;
+box-shadow: 4px 0 20px rgba(0,0,0,0.6);
+}
+@media (min-width: 768px) { aside { width: 95px; } }
+
+.brand-logo-circle {
+width: 48px;
+height: 48px;
+border-radius: 50%;
+border: 2px solid var(--accent-blue);
+overflow: hidden;
+background: #0f2d42;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+margin-bottom: 4px;
+}
+.brand-logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+.brand-text { font-size: 0.65rem; font-weight: 900; color: var(--accent-blue); display: block; text-align: center; }
+
+.nav-btn {
+width: 68px;
+height: 60px;
+background: transparent;
+border: 1px solid transparent;
+border-radius: 14px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 4px;
+color: var(--text-dim);
+cursor: pointer;
+transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-btn svg { width: 20px; height: 20px; fill: currentColor; }
+.nav-btn span { font-size: 0.65rem; font-weight: 800; }
+.nav-btn:hover { background: var(--sidebar-hover); color: var(--accent-blue); transform: translateY(-2px); }
+.nav-btn.active {
+background: linear-gradient(135deg, rgba(0, 180, 138, 0.25), rgba(56, 189, 248, 0.2));
+color: white;
+border-color: var(--primary);
+box-shadow: 0 0 16px rgba(0, 180, 138, 0.35);
+}
+.nav-btn.active svg { fill: var(--primary); }
+
+/* الحاوية الرئيسية */
+.app-main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+
+/* الشريط العلوي */
+.top-header {
+background: rgba(8, 18, 29, 0.88);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid var(--card-border);
+padding: 10px 18px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 10px;
+position: sticky;
+top: 0;
+z-index: 30;
+}
+.clinic-title h1 { font-size: 1.15rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 8px; }
+.clinic-badge { font-size: 0.7rem; background: rgba(0, 180, 138, 0.15); color: var(--primary); border: 1px solid var(--primary); padding: 3px 10px; border-radius: 20px; font-weight: bold; }
+
+.header-ctrls { display: flex; gap: 8px; align-items: center; }
+.btn-action {
+background: #122336;
+color: white;
+border: 1px solid var(--card-border);
+padding: 8px 12px;
+border-radius: 10px;
+font-size: 0.78rem;
+font-weight: bold;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+transition: all 0.2s;
+}
+.btn-action:hover { background: #1c3552; border-color: var(--accent-blue); transform: translateY(-1px); }
+.btn-emerald { background: var(--primary); border: none; color: #04141d; font-weight: 900; }
+.btn-emerald:hover { background: #02cfa0; box-shadow: 0 0 16px var(--primary-glow); }
+
+/* الصفحات والمحتوى */
+.content-viewport { padding: 16px; flex: 1; }
+.page-tab { display: none; }
+.page-tab.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.input-box {
+background: #06101c;
+border: 1px solid var(--card-border);
+color: white;
+padding: 10px 14px;
+border-radius: 10px;
+font-size: 0.85rem;
+outline: none;
+transition: border 0.2s;
+}
+.input-box:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 180, 138, 0.25); }
+
+/* بطاقات المراجعين */
+.patients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; margin-top: 16px; }
+.patient-card {
+background: var(--card-bg);
+backdrop-filter: blur(8px);
+border: 1px solid var(--card-border);
+border-radius: 16px;
+padding: 16px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+border-right: 5px solid var(--primary);
+transition: all 0.25s;
+}
+.patient-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.45); border-color: var(--accent-blue); }
+
+.pt-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.pt-avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #1e3a5a, #0d2838); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid var(--accent-blue); }
+.pt-info h3 { font-size: 1.05rem; font-weight: 900; color: white; }
+.pt-info p { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+.pt-dates-badge { font-size: 0.7rem; background: #071422; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--card-border); color: var(--accent-blue); }
+
+.pt-finance-bar {
+background: #081422;
+border: 1px solid #1c3652;
+border-radius: 10px;
+padding: 8px 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 0.75rem;
+}
+.pt-debt-alert { font-weight: 900; color: #ef4444; background: rgba(239, 68, 68, 0.15); padding: 2px 8px; border-radius: 6px; }
+
+.pt-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--card-border); }
+.btn-pt-action {
+background: #112032;
+border: 1px solid var(--card-border);
+color: white;
+padding: 7px 4px;
+border-radius: 8px;
+font-size: 0.7rem;
+font-weight: bold;
+cursor: pointer;
+text-align: center;
+transition: all 0.2s;
+}
+.btn-pt-action:hover { background: var(--primary); color: #05101a; border-color: var(--primary); }
+
+/* ================= الفكين 3D ================= */
+.jaw-3d-wrapper {
+background: radial-gradient(circle at center, #0e243a 0%, #06111e 100%);
+border: 2px solid var(--card-border);
+border-radius: 22px;
+padding: 24px 10px;
+position: relative;
+overflow-x: auto;
+box-shadow: inset 0 0 60px rgba(0,0,0,0.85), 0 10px 30px rgba(0,0,0,0.5);
+background-image:
+linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+background-size: 24px 24px;
+}
+.jaw-arch-title { text-align: center; font-size: 0.85rem; font-weight: 900; color: var(--accent-blue); margin-bottom: 8px; }
+.dental-arch-3d { display: flex; justify-content: center; align-items: center; gap: 3px; position: relative; margin: 16px 0; padding: 0 10px; }
+@media (min-width: 650px) { .dental-arch-3d { gap: 6px; } }
+
+.tooth-3d {
+width: 26px;
+height: 78px;
+display: flex;
+flex-direction: column;
+align-items: center;
+cursor: pointer;
+position: relative;
+user-select: none;
+transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+filter: drop-shadow(0 6px 10px rgba(0,0,0,0.7));
+}
+@media (min-width: 768px) { .tooth-3d { width: 36px; height: 98px; } }
+.tooth-3d:hover { transform: translateY(-8px) scale(1.18); z-index: 25; filter: drop-shadow(0 10px 18px rgba(56, 189, 248, 0.7)); }
+.tooth-3d.active-selected { transform: translateY(-10px) scale(1.24); z-index: 30; animation: toothGlow 1.5s infinite alternate; }
+@keyframes toothGlow { 0% { filter: drop-shadow(0 0 10px #00b48a); } 100% { filter: drop-shadow(0 0 24px #38bdf8); } }
+.tooth-number { font-size: 0.65rem; font-weight: 900; color: #64748b; margin-top: 3px; }
+
+.root-3d, .crown-3d { transition: fill 0.3s ease; }
+.tooth-3d.is-endo .root-3d { fill: url(#redGlowGrad) !important; }
+.tooth-3d.is-filling .crown-3d { fill: url(#blueGlowGrad) !important; }
+.tooth-3d.is-crown .crown-3d { fill: url(#goldGlowGrad) !important; }
+.tooth-3d.is-extract { opacity: 0.3; filter: grayscale(1); }
+.tooth-3d.is-extract::after { content: "✕"; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); color: #ef4444; font-size: 1.8rem; font-weight: 900; }
+
+.bubble-tag-3d {
+position: absolute;
+background: linear-gradient(135deg, #f59e0b, #d97706);
+color: #030811;
+font-size: 0.65rem;
+font-weight: 900;
+padding: 3px 8px;
+border-radius: 8px;
+white-space: nowrap;
+box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+pointer-events: none;
+z-index: 35;
+animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.bubble-tag-3d.up { top: -26px; }
+.bubble-tag-3d.down { bottom: -26px; }
+.bubble-tag-3d.up::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:4px solid transparent; border-top-color:#d97706; }
+.bubble-tag-3d.down::after { content:''; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); border:4px solid transparent; border-bottom-color:#f59e0b; }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.3); } 100% { opacity: 1; transform: scale(1); } }
+
+.color-swatch-bar {
+display: flex;
+justify-content: center;
+gap: 14px;
+background: rgba(14, 27, 43, 0.95);
+backdrop-filter: blur(10px);
+padding: 8px 20px;
+border-radius: 30px;
+width: fit-content;
+margin: 16px auto 0;
+border: 1px solid var(--card-border);
+}
+.color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+.color-dot:hover { transform: scale(1.25); border-color: white; }
+
+/* النوافذ العائمة */
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(3, 8, 17, 0.85);
+backdrop-filter: blur(6px);
+display: none;
+align-items: center;
+justify-content: center;
+z-index: 1000;
+padding: 14px;
+}
+.modal-card {
+background: #0f1c2d;
+border: 1px solid var(--card-border);
+border-radius: 18px;
+width: 100%;
+max-width: 560px;
+max-height: 90vh;
+overflow-y: auto;
+box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+}
+.modal-head {
+background: #07121f;
+padding: 14px 18px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-weight: 900;
+border-bottom: 1px solid var(--card-border);
+}
+.modal-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+
+/* تنبيه حساسية الأدوية */
+.allergy-alert-banner {
+background: linear-gradient(135deg, #ef4444, #991b1b);
+color: white;
+padding: 12px 16px;
+border-radius: 12px;
+display: none;
+align-items: center;
+gap: 10px;
+font-weight: 900;
+font-size: 0.85rem;
+box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+animation: alertPulse 1.2s infinite alternate;
+}
+@keyframes alertPulse { 0% { transform: scale(0.99); } 100% { transform: scale(1.02); } }
+
+.finance-privacy-blur { filter: blur(8px); user-select: none; pointer-events: none; transition: filter 0.3s; }
+
+/* الطباعة الشاملة A4 */
+#printableMasterSheet { display: none; background: white !important; color: #0f172a !important; padding: 28px; }
+@media print {
+body * { visibility: hidden; }
+#printableMasterSheet, #printableMasterSheet * { visibility: visible; }
+#printableMasterSheet {
+display: block !important;
+position: fixed;
+left: 0;
+top: 0;
+width: 100%;
+background: white !important;
+color: #0f172a !important;
+margin: 0;
+padding: 24px;
+}
+}
+</style>
+</head>
+<body>
+
+<!-- تدرجات SVG 3D للأسنان -->
+<svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+<defs>
+<linearGradient id="toothNormalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#ffffff"/>
+<stop offset="60%" stop-color="#f1f5f9"/>
+<stop offset="100%" stop-color="#cbd5e1"/>
+</linearGradient>
+<linearGradient id="rootNormalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#e2e8f0"/>
+<stop offset="70%" stop-color="#cbd5e1"/>
+<stop offset="100%" stop-color="#94a3b8"/>
+</linearGradient>
+<linearGradient id="redGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#f87171"/>
+<stop offset="100%" stop-color="#dc2626"/>
+</linearGradient>
+<linearGradient id="blueGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#38bdf8"/>
+<stop offset="100%" stop-color="#0284c7"/>
+</linearGradient>
+<linearGradient id="goldGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#fbbf24"/>
+<stop offset="100%" stop-color="#d97706"/>
+</linearGradient>
+</defs>
+</svg>
+
+<!-- ================= واجهة الدخول مع قفل الرقم السري (1992) ================= -->
+<div id="loginGateOverlay">
+<div class="login-card">
+<div class="login-avatar-frame">
+<img id="loginLogoPreview" src="logo.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3774/3774299.png'" alt="شعار د. حذيفة الحمداني">
+</div>
+<h2 style="font-size:1.35rem; color:white; font-weight:900;">عيادة المصارف</h2>
+<p style="font-size:0.85rem; color:var(--accent-blue); font-weight:bold; margin-bottom:16px;">الدكتور حذيفة الحمداني - طب وجراحة الأسنان</p>
+
+<!-- خيارات الدخول -->
+<div style="display:flex; flex-direction:column; gap:10px;">
+
+<!-- حقل الرقم السري للطبيب -->
+<div id="docPinBox" style="background:#071422; border:1px solid #1c3d5c; border-radius:12px; padding:12px;">
+<label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:6px;">🔒 رمز دخول الدكتور حذيفة الحمداني:</label>
+<div style="display:flex; gap:6px;">
+<input type="password" id="docPinInput" placeholder="أدخل الرمز السري" class="input-box" style="flex:1; text-align:center; font-size:1rem; letter-spacing:4px;">
+<button class="btn-action btn-emerald" onclick="verifyDoctorPin()">دخول</button>
+</div>
+<div id="pinErrorMsg" style="color:#ef4444; font-size:0.7rem; margin-top:4px; display:none;">⚠️ الرمز السري غير صحيح! (المطلوب 1992)</div>
+</div>
+
+<button class="btn-action" style="justify-content:center; padding:11px; font-size:0.85rem;" onclick="unlockClinic('staff')">
+📋 دخول السكرتارية والاستقبال (مفتوح بدون رمز)
+</button>
+</div>
+</div>
+</div>
+
+<!-- القائمة الجانبية -->
+<aside>
+<div class="brand-logo-circle">
+<img id="sidebarLogo" src="logo.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3774/3774299.png'" alt="شعار د. حذيفة الحمداني">
+</div>
+<span class="brand-text">د. حذيفة</span>
+
+<button class="nav-btn active" onclick="switchView('tabPatients', this)">
+<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+<span>المراجعين</span>
+</button>
+
+<button class="nav-btn" onclick="switchView('tabJaws', this)">
+<svg viewBox="0 0 24 24"><path d="M18.6 6.62c-1.44-3.82-4.9-4.62-6.6-4.62s-5.16.8-6.6 4.62c-1.57 4.18-.76 8.59.31 12.08.38 1.25 1.13 2.3 2.19 3.03.74.52 1.63.78 2.54.74.88-.04 1.56-.7 1.56-1.58v-4.89h0c0-.55.45-1 1-1s1 .45 1 1v4.89c0 .88.68 1.54 1.56 1.58.91.04 1.8-.22 2.54-.74 1.06-.73 1.81-1.78 2.19-3.03 1.07-3.49 1.88-7.9.31-12.08z"/></svg>
+<span>الفكين 3D</span>
+</button>
+
+<button class="nav-btn" onclick="switchView('tabAppointments', this)">
+<svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+<span>المواعيد</span>
+</button>
+
+<button class="nav-btn" onclick="switchView('tabFinance', this)">
+<svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+<span>المالية 🔒</span>
+</button>
+
+<button class="nav-btn" onclick="switchView('tabWhatsapp', this)">
+<svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+<span>واتساب 💬</span>
+</button>
+
+<!-- حقل كادر الأطباء تحت الواتساب -->
+<button class="nav-btn" onclick="switchView('tabStaff', this)">
+<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+<span>الكادر 👨‍⚕️</span>
+</button>
+</aside>
+
+<!-- جسم التطبيق الرئيسي -->
+<div class="app-main">
+
+<!-- الشريط العلوي -->
+<header class="top-header">
+<div class="clinic-title">
+<h1>
+<span>عيادة المصارف - الدكتور حذيفة الحمداني</span>
+<span class="clinic-badge" id="currentRoleBadge">المدير: د. حذيفة الحمداني</span>
+</h1>
+</div>
+
+<div class="header-ctrls">
+<button class="btn-action" onclick="speakDailySchedule()">🔊 نطق المواعيد الذكي</button>
+<button class="btn-action btn-emerald" onclick="openModal('newPatientModal')">➕ مراجع جديد</button>
+</div>
+</header>
+
+<div class="content-viewport">
+
+<!-- ================= 1. سجل المراجعين ================= -->
+<section id="tabPatients" class="page-tab active">
+<div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+<input type="text" id="patientSearchBox" oninput="filterPatientsList()" placeholder="🔍 ابحث باسم المريض أو رقم الهاتف..." class="input-box" style="flex:1; max-width:320px;">
+<button class="btn-action" onclick="exportPatientsCsv()">📊 تصدير Excel</button>
+</div>
+<div class="patients-grid" id="patientsContainer"></div>
+</section>
+
+<!-- ================= 2. المخطط السريري للفكين 3D ================= -->
+<section id="tabJaws" class="page-tab">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+<div>
+<h3 style="font-size:1.1rem; font-weight:900; color:var(--accent-blue);">المخطط التشريحي للفكين (3D Dental Arches)</h3>
+<p style="font-size:0.75rem; color:var(--text-dim);">المراجع المحدد: <strong id="chartPatientTitle" style="color:white;">--</strong></p>
+</div>
+<button class="btn-action btn-emerald" onclick="printMasterReportForCurrent()">🖨 طباعة التقرير والروشتة الشاملة (A4)</button>
+</div>
+
+<div class="jaw-3d-wrapper" id="dentalChartBox">
+<div style="display:flex; justify-content:space-between; color:var(--accent-blue); font-weight:900; font-size:0.8rem; padding:0 14px;">
+<span>اليمين (Right Side)</span>
+<span>اليسار (Left Side)</span>
+</div>
+
+<div class="jaw-arch-title">الفك العلوي (Upper Jaw Arch)</div>
+<div class="dental-arch-3d" id="upperArch"></div>
+
+<div class="dental-arch-3d" id="lowerArch" style="margin-top:24px;"></div>
+<div class="jaw-arch-title" style="margin-top:8px;">الفك السفلي (Lower Jaw Arch)</div>
+
+<div class="color-swatch-bar">
+<div class="color-dot" style="background:#ffffff;" title="سليم" onclick="setChartColor('normal')"></div>
+<div class="color-dot" style="background:#38bdf8;" title="حشوة بيضاء" onclick="setChartColor('filling')"></div>
+<div class="color-dot" style="background:#ef4444;" title="حشوة عصب / جذر" onclick="setChartColor('endo')"></div>
+<div class="color-dot" style="background:#f59e0b;" title="تغليف / تاج" onclick="setChartColor('crown')"></div>
+<div class="color-dot" style="background:#64748b;" title="قلع سن" onclick="setChartColor('extract')"></div>
+</div>
+</div>
+</section>
+
+<!-- ================= 3. جدول المواعيد ================= -->
+<section id="tabAppointments" class="page-tab">
+<div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+<input type="date" id="appointmentDateFilter" onchange="renderAppointments()" class="input-box">
+<button class="btn-action btn-emerald" onclick="openNewAppModal()">➕ حجز موعد مراجع</button>
+</div>
+<div id="appointmentsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+</section>
+
+<!-- ================= 4. الإدارة المالية ================= -->
+<section id="tabFinance" class="page-tab">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+<h3 style="font-size:1.1rem; color:var(--accent-blue); font-weight:900;">الإدارة المالية للعيادة (الوضع السري الخاص)</h3>
+<button class="btn-action" id="togglePrivacyBtn" onclick="toggleFinancialPrivacy()">👁️ إظهار/إخفاء الأرقام</button>
+</div>
+
+<div id="financeCardsContainer" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:16px;">
+<div style="background:var(--card-bg); padding:14px; border-radius:12px; border-right:4px solid var(--primary);">
+<div style="font-size:0.75rem; color:var(--text-dim);">مقبوضات كاش (💵):</div>
+<h3 id="statCash" style="color:var(--primary); font-size:1.4rem;">0 د.ع</h3>
+</div>
+<div style="background:var(--card-bg); padding:14px; border-radius:12px; border-right:4px solid var(--accent-blue);">
+<div style="font-size:0.75rem; color:var(--text-dim);">مقبوضات بطاقة (💳):</div>
+<h3 id="statCard" style="color:var(--accent-blue); font-size:1.4rem;">0 د.ع</h3>
+</div>
+<div style="background:var(--card-bg); padding:14px; border-radius:12px; border-right:4px solid var(--accent-red);">
+<div style="font-size:0.75rem; color:var(--text-dim);">الديون المتبقية بذمة المرضى:</div>
+<h3 id="statDebt" style="color:var(--accent-red); font-size:1.4rem;">0 د.ع</h3>
+</div>
+</div>
+<div id="financeList" style="display:flex; flex-direction:column; gap:8px;"></div>
+</section>
+
+<!-- ================= 5. التواصل عبر واتساب ================= -->
+<section id="tabWhatsapp" class="page-tab">
+<h3 style="font-size:1rem; color:var(--accent-blue); margin-bottom:12px;">نظام تذكير المراجعين والتعليمات عبر WhatsApp</h3>
+<div id="whatsappList" style="display:flex; flex-direction:column; gap:8px;"></div>
+</section>
+
+<!-- ================= 6. قسم كادر الأطباء (حتى 10 أطباء) ================= -->
+<section id="tabStaff" class="page-tab">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+<div>
+<h3 style="font-size:1.1rem; color:var(--accent-blue); font-weight:900;">إدارة كادر أطباء عيادة المصارف (حتى 10 أطباء)</h3>
+<p style="font-size:0.75rem; color:var(--text-dim);">بإشراف وإدارة الدكتور حذيفة الحمداني</p>
+</div>
+<button class="btn-action btn-emerald" onclick="openModal('newDoctorModal')">➕ إضافة طبيب للكادر</button>
+</div>
+
+<div id="staffListWrapper" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
+</section>
+
+</div>
+</div>
+
+<!-- ================= نافذة إضافة طبيب للكادر ================= -->
+<div class="modal-overlay" id="newDoctorModal">
+<div class="modal-card" style="max-width:440px;">
+<div class="modal-head">
+<span>إضافة طبيب جديد لكادر العيادة</span>
+<button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="closeModal('newDoctorModal')">×</button>
+</div>
+<form onsubmit="handleSaveNewDoctor(event)" class="modal-body">
+<div>
+<label style="font-size:0.8rem; font-weight:bold;">اسم الطبيب الثلاثي:</label>
+<input type="text" id="inpDocName" required placeholder="مثال: د. أحمد يوسف" class="input-box" style="width:100%; margin-top:4px;">
+</div>
+<div>
+<label style="font-size:0.8rem; font-weight:bold;">الاختصاص الدقيق:</label>
+<input type="text" id="inpDocSpecialty" required placeholder="مثال: أخصائي جراحة الفم والزراعة" class="input-box" style="width:100%; margin-top:4px;">
+</div>
+<button type="submit" class="btn-action btn-emerald" style="justify-content:center;">حفظ الطبيب في الكادر</button>
+</form>
+</div>
+</div>
+
+<!-- ================= نافذة إجراء السن مع الجلسات والقياسات ================= -->
+<div class="modal-overlay" id="toothActionModal">
+<div class="modal-card">
+<div class="modal-head">
+<span>إجراء وعمق السن رقم: <strong id="lblToothNum" style="color:var(--accent-blue);"></strong></span>
+<button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="closeModal('toothActionModal')">×</button>
+</div>
+<div class="modal-body">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+<div>
+<label style="font-size:0.8rem; font-weight:bold;">نوع الإجراء الطبي:</label>
+<select id="toothOpSelect" class="input-box" style="width:100%; margin-top:4px;" onchange="toggleMeasurementFields()">
+<option value="حشوة جذر">حشوة جذر / سحب عصب (Endo)</option>
+<option value="حشوة بيضاء">حشوة ضوئية بيضاء (Composite)</option>
+<option value="زراعة سن">زراعة سن (Implant)</option>
+<option value="تغليف السن">تغليف السن (Crown)</option>
+<option value="قلع سن">قلع سن (Extraction)</option>
+<option value="تقويم أسنان">تقويم أسنان (Orthodontics)</option>
+</select>
+</div>
+
+<div>
+<label style="font-size:0.8rem; font-weight:bold; color:var(--accent-gold);">رقم الجلسة السريرية:</label>
+<select id="toothSessionSelect" class="input-box" style="width:100%; margin-top:4px;">
+<option value="الجلسة الأولى">الجلسة الأولى (Session 1)</option>
+<option value="الجلسة الثانية">الجلسة الثانية (Session 2)</option>
+<option value="الجلسة الثالثة">الجلسة الثالثة (Session 3)</option>
+<option value="الجلسة الرابعة">الجلسة الرابعة (Session 4)</option>
+<option value="جلسة إنهاء العلاج">جلسة إنهاء العلاج (Final Session)</option>
+<option value="جلسة متابعة ومعاينة">جلسة متابعة ومعاينة</option>
+</select>
+</div>
+</div>
+
+<div id="endoMeasureBox" style="background:#071422; padding:10px; border-radius:10px; border:1px solid #1c3d5c;">
+<h4 style="font-size:0.8rem; color:#38bdf8; margin-bottom:6px;">📏 قياس عمق الأقنية (Working Length - ملم):</h4>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+<input type="text" id="inpCanal1" placeholder="قناة MB (مثلاً: 21.5mm)" class="input-box">
+<input type="text" id="inpCanal2" placeholder="قناة ML (مثلاً: 21.0mm)" class="input-box">
+<input type="text" id="inpCanal3" placeholder="قناة DB (مثلاً: 20.5mm)" class="input-box">
+<input type="text" id="inpCanal4" placeholder="قناة Palatal/Distal" class="input-box">
+</div>
+</div>
+
+<div id="implantMeasureBox" style="background:#071422; padding:10px; border-radius:10px; border:1px solid #1c3d5c; display:none;">
+<h4 style="font-size:0.8rem; color:#f59e0b; margin-bottom:6px;">🔩 أبعاد الغرسة السنية (Implant Dimensions):</h4>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+<input type="text" id="inpImpLength" placeholder="طول الغرسة (مثلاً: 11.5mm)" class="input-box">
+<input type="text" id="inpImpDia" placeholder="قطر الغرسة (مثلاً: 4.2mm)" class="input-box">
+<input type="text" id="inpImpTorque" placeholder="عزم التثبيت (Torque: 35Ncm)" class="input-box" style="grid-column:span 2;">
+</div>
+</div>
+
+<div id="orthoMeasureBox" style="background:#071422; padding:10px; border-radius:10px; border:1px solid #1c3d5c; display:none;">
+<h4 style="font-size:0.8rem; color:#a855f7; margin-bottom:6px;">📐 قياسات التقويم (Ortho Measurements):</h4>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+<input type="text" id="inpOrthoOverjet" placeholder="مقدار البروز Overjet (ملم)" class="input-box">
+<input type="text" id="inpOrthoWire" placeholder="مقاس السلك (مثلاً: 0.016 NiTi)" class="input-box">
+</div>
+</div>
+
+<div>
+<label style="font-size:0.8rem; font-weight:bold;">نص بالون الملاحظة السريرية (Bubble Note):</label>
+<input type="text" id="toothBubbleInput" placeholder="مثال: تنظيف وتوسيع القنوات..." class="input-box" style="width:100%; margin-top:4px;">
+</div>
+
+<button class="btn-action btn-emerald" style="width:100%; justify-content:center;" onclick="applyToothChanges()">تثبيت الإجراء والجلسة على الفك</button>
+</div>
+</div>
+</div>
+
+<!-- ================= نافذة مراجع جديد ================= -->
+<div class="modal-overlay" id="newPatientModal">
+<div class="modal-card">
+<div class="modal-head">
+<span>إضافة مراجع جديد لعيادة المصارف</span>
+<button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="closeModal('newPatientModal')">×</button>
+</div>
+<form onsubmit="handleSavePatient(event)" class="modal-body">
+<input type="text" id="newPtName" required placeholder="اسم المراجع الكامل" class="input-box">
+
+<div style="display:flex; gap:8px;">
+<input type="number" id="newPtAge" required placeholder="العمر" class="input-box" style="flex:1;">
+<input type="tel" id="newPtPhone" required placeholder="رقم الهاتف" class="input-box" style="flex:1;">
+</div>
+
+<input type="text" id="newPtAddress" placeholder="السكن / المنطقة" class="input-box">
+
+<!-- اختيار الطبيب المشرف من بين أطباء الكادر -->
+<div>
+<label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">الطبيب المعالج / المشرف:</label>
+<select id="newPtDoctor" class="input-box" style="width:100%; margin-top:4px;"></select>
+</div>
+
+<!-- الحساب المالي الداخلي -->
+<div style="background:#071422; padding:12px; border-radius:12px; border:1px solid #1c3652;">
+<h4 style="font-size:0.85rem; color:var(--accent-gold); margin-bottom:8px;">💰 الحساب المالي للإجراء (داخلي فقط):</h4>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+<div>
+<label style="font-size:0.75rem; color:#94a3b8;">سعر الإجراء الإجمالي (د.ع):</label>
+<input type="number" id="newPtCost" value="100000" oninput="recalcNewPatientDebt()" class="input-box" style="width:100%; margin-top:2px;">
+</div>
+<div>
+<label style="font-size:0.75rem; color:#94a3b8;">المبلغ المستلم / المدفوع (د.ع):</label>
+<input type="number" id="newPtPaid" value="50000" oninput="recalcNewPatientDebt()" class="input-box" style="width:100%; margin-top:2px;">
+</div>
+</div>
+<div style="margin-top:8px; font-size:0.8rem; font-weight:bold; color:#38bdf8;">
+المتبقي بذمة المراجع: <span id="lblNewPtDebt" style="color:#ef4444; font-size:0.95rem;">50,000</span> دينار عراقي
+</div>
+</div>
+
+<input type="text" id="newPtHealth" placeholder="الحساسية للأدوية (بنسلين، سلفا، بروفين... أو سليم)" class="input-box" style="border-color:#ef4444;">
+
+<div>
+<label style="font-size:0.8rem; font-weight:bold; color:var(--accent-blue);">ملاحظات الطبيب وتشخيص الحالة:</label>
+<textarea id="newPtDocNotes" placeholder="ملاحظات سريرية، تفاصيل الخطة العلاجية..." class="input-box" style="width:100%; height:65px; margin-top:4px;"></textarea>
+</div>
+
+<button type="submit" class="btn-action btn-emerald" style="justify-content:center;">حفظ بيانات المراجع</button>
+</form>
+</div>
+</div>
+
+<!-- ================= نافذة تعديل بيانات المراجع ================= -->
+<div class="modal-overlay" id="editPatientModal">
+<div class="modal-card">
+<div class="modal-head">
+<span>تعديل بيانات المراجع: <strong id="lblEditPtTitle" style="color:var(--accent-blue);"></strong></span>
+<button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="closeModal('editPatientModal')">×</button>
+</div>
+<form onsubmit="handleUpdatePatient(event)" class="modal-body">
+<input type="hidden" id="editPtId">
+<input type="text" id="editPtName" required placeholder="اسم المراجع الكامل" class="input-box">
+
+<div style="display:flex; gap:8px;">
+<input type="number" id="editPtAge" required placeholder="العمر" class="input-box" style="flex:1;">
+<input type="tel" id="editPtPhone" required placeholder="رقم الهاتف" class="input-box" style="flex:1;">
+</div>
+
+<input type="text" id="editPtAddress" placeholder="السكن / المنطقة" class="input-box">
+
+<div>
+<label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">الطبيب المعالج / المشرف:</label>
+<select id="editPtDoctor" class="input-box" style="width:100%; margin-top:4px;"></select>
+</div>
+
+<div style="background:#071422; padding:12px; border-radius:12px; border:1px solid #1c3652;">
+<h4 style="font-size:0.85rem; color:var(--accent-gold); margin-bottom:8px;">💰 تعديل الحساب المالي:</h4>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+<div>
+<label style="font-size:0.75rem; color:#94a3b8;">سعر الإجراء الإجمالي (د.ع):</label>
+<input type="number" id="editPtCost" oninput="recalcEditPatientDebt()" class="input-box" style="width:100%; margin-top:2px;">
+</div>
+<div>
+<label style="font-size:0.75rem; color:#94a3b8;">المبلغ المستلم / المدفوع (د.ع):</label>
+<input type="number" id="editPtPaid" oninput="recalcEditPatientDebt()" class="input-box" style="width:100%; margin-top:2px;">
+</div>
+</div>
+<div style="margin-top:8px; font-size:0.8rem; font-weight:bold; color:#38bdf8;">
+المتبقي بذمة المراجع: <span id="lblEditPtDebt" style="color:#ef4444; font-size:0.95rem;">0</span> دينار عراقي
+</div>
+</div>
+
+<input type="text" id="editPtHealth" placeholder="الحساسية للأدوية" class="input-box" style="border-color:#ef4444;">
+
+<div>
+<label style="font-size:0.8rem; font-weight:bold; color:var(--accent-blue);">ملاحظات الطبيب وتشخيص الحالة:</label>
+<textarea id="editPtDocNotes" class="input-box" style="width:100%; height:65px; margin-top:4px;"></textarea>
+</div>
+
+<button type="submit" class="btn-action btn-emerald" style="justify-content:center;">حفظ التعديلات</button>
+</form>
+</div>
+</div>
+
+<!-- ================= نافذة حجز موعد ================= -->
+<div class="modal-overlay" id="newAppModal">
+<div class="modal-card">
+<div class="modal-head">
+<span>تحديد موعد حجز واختيار الطبيب</span>
+<button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="closeModal('newAppModal')">×</button>
+</div>
+<form onsubmit="handleSaveApp(event)" class="modal-body">
+<div>
+<label style="font-size:0.8rem; font-weight:bold;">المراجع:</label>
+<select id="selAppPatient" required class="input-box" style="width:100%; margin-top:4px;"></select>
+</div>
+
+<div>
+<label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">الطبيب المعالج المطلوب للحجز:</label>
+<select id="selAppDoctor" required class="input-box" style="width:100%; margin-top:4px;"></select>
+</div>
+
+<div style="display:flex; gap:8px;">
+<input type="date" id="inpAppDate" required class="input-box" style="flex:1;">
+<input type="time" id="inpAppTime" required class="input-box" style="flex:1;">
+</div>
+<input type="text" id="inpAppProc" placeholder="نوع الإجراء (جلسة عصب / حشوة / كشف...)" class="input-box">
+<button type="submit" class="btn-action btn-emerald" style="justify-content:center;">تأكيد وحفظ الموعد</button>
+</form>
+</div>
+</div>
+
+<!-- ================= نافذة الأدوية، فحص الحساسية، والأشعة ================= -->
+<div class="modal-overlay" id="medsModal">
+<div class="modal-card">
+<div class="modal-head">
+<span>الوصفة الطبية وفحص الحساسية: <strong id="lblMedPatient" style="color:var(--accent-blue);"></strong></span>
+<button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="closeModal('medsModal')">×</button>
+</div>
+<div class="modal-body">
+<div id="allergyAlertBanner" class="allergy-alert-banner">
+<span>⚠️ تحذير خطير: هذا الدواء يتعارض مع حساسية المريض المسجلة! قد يؤدي إلى مضاعفات تحسسية حادة.</span>
+</div>
+
+<div style="border-bottom:1px solid var(--card-border); padding-bottom:12px;">
+<h4 style="font-size:0.85rem; margin-bottom:6px; color:var(--primary);">➕ كتابة دواء للروشتة (℞):</h4>
+<div style="display:flex; gap:6px;">
+<input type="text" id="inpMedName" oninput="checkDrugAllergyLive()" placeholder="اسم الدواء (مثل: Amoxicillin, Augmentin, Brufen)" class="input-box" style="flex:1;">
+<input type="text" id="inpMedDose" placeholder="الجرعة (مثلاً: كبسولة كل 8 ساعات)" class="input-box" style="flex:1;">
+<button class="btn-action btn-emerald" onclick="addMedication()">إضافة</button>
+</div>
+<div id="patientMedsList" style="margin-top:8px; font-size:0.8rem; display:flex; flex-direction:column; gap:4px;"></div>
+</div>
+
+<div>
+<h4 style="font-size:0.85rem; margin-bottom:6px; color:var(--accent-gold);">📷 إرفاق صورة الأشعة:</h4>
+<input type="file" id="inpXrayFile" accept="image/*" class="input-box" onchange="handleXrayUpload(event)">
+<div id="patientXrayPreview" style="margin-top:8px;"></div>
+</div>
+
+<button class="btn-action btn-emerald" style="justify-content:center;" onclick="printMasterReportForCurrent()">🖨️ طباعة التقرير الشامل والروشتة الآن</button>
+</div>
+</div>
+</div>
+
+<!-- ================= ورقة الطباعة الشاملة والروشتة A4 ================= -->
+<div id="printableMasterSheet">
+<div style="display:flex; justify-content:space-between; align-items:cente
